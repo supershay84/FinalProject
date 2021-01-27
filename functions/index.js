@@ -1,10 +1,8 @@
 const functions = require("firebase-functions");
-const admin = require('firebase-admin');
-admin.initializeApp();
 const express = require('express');
 const app = express();
 const firebase = require('firebase');
-const db = admin.firestore();
+const { getAllScreams } = require('./handlers/screams');
 
 const config = {
     apiKey: "AIzaSyB7oXuxKOF07QAN9J2pVGIjNGa8EAS5pcg",
@@ -25,24 +23,9 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   functions.logger.info("Hello logs!", {structuredData: true});
   response.send("Hello from Firebase!");
 });
+
 // SCREAM! ROUTES
-app.get('/screams', (req, res) => {
-    db
-    .collection('screams')
-    .orderBy('createdAt', 'desc')
-    .get()
-    .then((data) => {
-        let screams = [];
-        data.forEach((doc) => {
-            screams.push({
-                screamId: doc.id,
-                ...doc.data()
-            });
-        });
-        return res.json(screams);
-    })
-    .catch((err) => console.error(err));
-});
+app.get('/screams', getAllScreams );
 
 const FBAuth = (req, res, next) => {
     let idToken;
