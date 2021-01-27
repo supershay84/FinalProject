@@ -4,6 +4,7 @@ const app = express();
 const FBAuth = require('./utilities/fbAuth');
 const { getAllScreams, postScream } = require('./handlers/screams');
 const { signup, login, uploadImage } = require('./handlers/users');
+// app.use(express.json());
 
 // // // Create and Deploy Your First Cloud Functions
 // // // https://firebase.google.com/docs/functions/write-firebase-functions

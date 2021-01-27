@@ -23,7 +23,7 @@ exports.validateSignUp = (data) => {
 // CHECK FOR ERRORS
     return {
         errors,
-        vaild: Object.keys(errors).length === 0 ? true : false
+        valid: Object.keys(errors).length === 0 ? true : false
     };
 };
 
@@ -34,6 +34,6 @@ exports.validateLogin = (data) => {
     // CHECK FOR ERRORS
     return {
         errors,
-        vaild: Object.keys(errors).length === 0 ? true : false
+        valid: Object.keys(errors).length === 0 ? true : false
     };
 };
