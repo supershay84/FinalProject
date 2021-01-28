@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const FBAuth = require('./utilities/auth');
 const { getAllScreams, postScream } = require('./controllers/screams');
-const { signup, login, uploadImage, addUserDetails } = require('./controllers/users');
+const { signup, login, uploadImage, addUserDetails, getUser } = require('./controllers/users');
 // app.use(express.json());
 
 // // // Create and Deploy Your First Cloud Functions
@@ -16,6 +16,7 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 
 // ROUTES
 app.get('/screams', getAllScreams );
+app.get('/user', FBAuth, getUser);
 app.post('/scream', FBAuth, postScream);
 app.post('/signup', signup);
 app.post('/login', login);
