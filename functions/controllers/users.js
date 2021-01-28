@@ -2,7 +2,7 @@ const { db, admin } = require('../utilities/admin');
 const config = require('../utilities/config.js');
 const firebase = require('firebase');
 firebase.initializeApp(config)
-const { validateSignUp, validateLogin } = require('../utilities/validation');
+const { validateSignUp, validateLogin, reduceUserDetails } = require('../utilities/validation');
 
 exports.signup = (req, res) => {
     const newUser = {
@@ -77,6 +77,20 @@ exports.login = (req, res) => {
     } else return res.status(500).json({error: err.code});
     });
 };
+// ADD USER PROFILE
+exports.addUserDetails = (req, res) => {
+   let userDetails = reduceUserDetails(req.body); 
+   db.doc(`/users/${req.user.handle}`).update(userDetails)
+    .then(() => {
+        return res.json({ message: 'Profile updated!'});
+    })
+    .catch((err) => {
+        console.error(err);
+        return res.status(500).json({ error: err.code });
+    })
+
+}
+
 
 // ADD IMAGE UPLOADS TO USER PROFILE
 // https://mikesukmanowsky.com/firebase-file-and-image-uploads/
