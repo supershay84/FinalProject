@@ -2,8 +2,8 @@ const functions = require("firebase-functions");
 const express = require('express');
 const app = express();
 const FBAuth = require('./utilities/fbAuth');
-const { getAllScreams, postScream } = require('./handlers/screams');
-const { signup, login, uploadImage } = require('./handlers/users');
+const { getAllScreams, postScream } = require('./controllers/screams');
+const { signup, login, uploadImage } = require('./controllers/users');
 // app.use(express.json());
 
 // // // Create and Deploy Your First Cloud Functions

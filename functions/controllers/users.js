@@ -15,7 +15,7 @@ exports.signup = (req, res) => {
     const {valid, errors} = validateSignUp(newUser);
     if(!valid) return res.status(400).json(errors);
 
-    const noImg = 'no-img.png';
+    const image = 'images-1.jpg';
 
 // VALIDATE DATA
     let token, userId;
@@ -37,7 +37,7 @@ exports.signup = (req, res) => {
                 handle: newUser.handle,
                 email: newUser.email,
                 createdAt: new Date().toISOString(),
-                imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
+                imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${image}?alt=media`,
                 userId
             };
             return db.doc(`/users/${newUser.handle}`).set(userCredentials);
@@ -78,6 +78,8 @@ exports.login = (req, res) => {
     });
 };
 
+// ADD IMAGE UPLOADS TO USER PROFILE
+// https://mikesukmanowsky.com/firebase-file-and-image-uploads/
 exports.uploadImage = (req, res) => {
     const BusBoy = require('busboy');
     const path = require('path');
@@ -88,12 +90,11 @@ exports.uploadImage = (req, res) => {
 
     let imageFileName;
     let imageToBeUploaded = {};
-
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         console.log(fieldname);
         console.log(filename);
         console.log(mimetype);
-        if(mimetype !== 'image/jpeg' && mimetype !== 'image/png'){
+        if(mimetype !== 'image/jpg' && mimetype !== 'image/png'){
             return res.status(400).json ({ error: 'Wrong file type'});
         }
         const imageExtension = filename.split('.')[filename.split('.').length - 1];
