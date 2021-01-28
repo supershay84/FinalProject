@@ -2,8 +2,14 @@ const functions = require("firebase-functions");
 const express = require('express');
 const app = express();
 const FBAuth = require('./utilities/auth');
-const { getAllScreams, postScream } = require('./controllers/screams');
-const { signup, login, uploadImage, addUserDetails, getUser } = require('./controllers/users');
+const { getAllScreams, postScream, getScream, commentScream } = require('./controllers/screams');
+const { 
+        signup, 
+        login, 
+        uploadImage, 
+        addUserDetails, 
+        getUser
+      } = require('./controllers/users');
 // app.use(express.json());
 
 // // // Create and Deploy Your First Cloud Functions
@@ -14,13 +20,19 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-// ROUTES
+// DATA ROUTES
 app.get('/screams', getAllScreams );
-app.get('/user', FBAuth, getUser);
 app.post('/scream', FBAuth, postScream);
+app.get('/scream/:screamId', getScream);
+app.post('/scream/:screamId/comment', FBAuth, commentScream);
+// DELETE
+// LIKE
+// UNLIKE
+// USER ROUTES
 app.post('/signup', signup);
 app.post('/login', login);
 app.post('/user/image',FBAuth, uploadImage);
 app.post('/user', FBAuth, addUserDetails);
+app.get('/user', FBAuth, getUser);
 
 exports.api = functions.region('us-east4').https.onRequest(app);

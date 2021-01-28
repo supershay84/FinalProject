@@ -19,9 +19,18 @@ let db = {
             likeCount: 5,
             commentCount: 2
         }
+    ],
+    comments: [
+        {
+            userHandle: 'person',
+            screamId: 'hhbhbhiudiuio',
+            body: 'People are people',
+            createdAt: '2021-01-25T01:10:01.657Z'
+        }
     ]
 };
 
+// REDUX
 const userDetails = {
     credentials: {
         userId: 'nhbhbbiunab',
