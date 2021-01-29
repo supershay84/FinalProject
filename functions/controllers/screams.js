@@ -1,23 +1,20 @@
 const { db } = require('../utilities/admin');
 // GET ALL THE SCREAMS
 exports.getAllScreams = (req, res) => {
-    db
-    .collection('screams')
-    .orderBy('createdAt', 'desc')
-    .get()
-    .then((data) => {
-        let screams = [];
-        data.forEach((doc) => {
-            screams.push({
-                screamId: doc.id,
-                ...doc.data()
+    db.collection('screams').orderBy('createdAt', 'desc').get()
+        .then((data) => {
+            let screams = [];
+            data.forEach((doc) => {
+                screams.push({
+                    screamId: doc.id,
+                    ...doc.data()
+                });
             });
-        });
-        return res.json(screams);
-    })
-    .catch((err) => {
-        console.error(err);
-        res.status(500).json({error: err.code});
+            return res.json(screams);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json({error: err.code});
     });
 };
 
@@ -34,17 +31,15 @@ exports.postScream = (req, res) => {
        likeCount: 0,
        commentCount: 0
    };
-   db
-   .collection('screams')
-   .add(newScream)
-   .then((doc) => {
-       const resScream = newScream;
-       resScream.screamId = doc.id;
-       res.json(resScream)
-   })
-    .catch((err) => {
-        res.status(500).json({error: 'Something went wrong'});
-        console.error(err);
+   db.collection('screams').add(newScream)
+        .then((doc) => {
+            const resScream = newScream;
+            resScream.screamId = doc.id;
+            res.json(resScream)
+        })
+        .catch((err) => {
+                console.error(err);
+                res.status(500).json({error: 'Something went wrong'});
     });
 };
 
@@ -90,19 +85,22 @@ exports.commentScream = (req, res) => {
     };
 
     db.doc(`/screams/${req.params.screamId}`).get()
-    .then((doc) => {
-        if(!doc.exists){
-            return res.status(404).json({ error: 'Scream not heard!'});
-        }
-        return db.collection('comments').add(newComment);
-    })
-    .then(() => {
-        res.json(newComment);
-    })
-    .catch((err) => {
-        console.error(err);
-        res.status(500).json({ error: 'Something went wrong' });
-    });
+        .then((doc) => {
+            if(!doc.exists){
+                return res.status(404).json({ error: 'Scream not heard!'});
+            }
+            return doc.ref.update({ commentCount: doc.data().commentCount + 1 });
+        })
+        .then(() => {
+            return db.collection('comments').add(newComment);
+        })
+        .then(() => {
+            res.json(newComment);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json({ error: 'Something went wrong' });
+        });
 };
 // LIKE A SCREAM
 exports.likeScream = (req, res) => {
