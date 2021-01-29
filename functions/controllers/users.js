@@ -53,7 +53,7 @@ exports.signup = (req, res) => {
             return res.status(500).json({error: err.code});
         }});
     }
-
+// LOGIN
 exports.login = (req, res) => {
     const user = {
         email: req.body.email,
@@ -89,8 +89,42 @@ exports.addUserDetails = (req, res) => {
         return res.status(500).json({ error: err.code });
     });
 };
-
-// GET USER PROFILE
+// GET ANOTHER USERS PROFILE
+exports.getUserDetails = (req, res) => {
+    let userData ={};
+    db.doc(`/users/${req.params.handle}`).get()
+    .then((doc) => {
+        if(doc.exists){
+            userData.user = doc.data();
+            return db.collection('screams')
+                     .where('userHandle', '==', req.params.handle)
+                     .orderBy('createdAt', 'desc')
+                     .get();
+        } else {
+            return res.status(404).json({ error: 'Sreamer not found!'});
+        }
+    })
+    .then((data) => {
+       userData.screams = [];
+       data.forEach ((doc) => {
+           userData.screams.push({
+               body: doc.data().body,
+               createdAt: doc.data().createdAt,
+               userHandle: doc.data().userHandle,
+               userImage: doc.data().userImage,
+               likeCount: doc.data().likeCount,
+               commentCount: doc.data().commentCount,
+               screamId: doc.data().screamId
+           })
+       });
+       return res.json(userData);
+    })
+    .catch((err) => {
+        console.error(err);
+        return res.status(500).json({ error: err.code });
+    })
+};
+// GET OWN PROFILE
 exports.getUser = (req, res) => {
     let userData = {};
     db.doc(`/users/${req.user.handle}`).get()
@@ -105,6 +139,21 @@ exports.getUser = (req, res) => {
             data.forEach((doc) => {
                 userData.likes.push(doc.data());
             });
+            return db.collection('notifications').where('recipient', '==', req.user.handle).orderBy('createdAt', 'desc').get();
+        })
+        .then((data) => {
+            userData.notifications = [];
+            data.forEach((doc) => {
+                userData.notifications.push({
+                    recipient: doc.data().recipient,
+                    sender: doc.data().sender,
+                    read: doc.data().read,
+                    screamId: doc.data().screamId,
+                    type: doc.data().type,
+                    createdAt: doc.data().createdAt,
+                    notificationId: doc.id
+                });
+            });
             return res.json(userData);
         })
         .catch((err) => {
@@ -112,7 +161,22 @@ exports.getUser = (req, res) => {
             return res.status(500).json({ error: err.code });
         })
 };
-
+// MARK NOTIFICATIONS WHEN READ
+exports.readNotifications = (req, res) => {
+    let batch = db.batch();
+    req.body.forEach((notificationId) => {
+        const notification = db.doc(`/notification/${notificationId}`);
+        batch.update(notification, { read: true });
+    });
+    batch.commit()
+        .then(() => {
+            return res.json({ message: 'Notification read'});
+        })
+        .catch((err) => {
+            console.error(err);
+            return res.status(500).json({ error: err.code });
+        });
+};
 
 // ADD IMAGE UPLOADS TO USER PROFILE
 // https://mikesukmanowsky.com/firebase-file-and-image-uploads/

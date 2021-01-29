@@ -15,7 +15,9 @@ const {
         login, 
         uploadImage, 
         addUserDetails, 
-        getUser
+        getUser,
+        getUserDetails,
+        readNotifications
       } = require('./controllers/users');
 // app.use(express.json());
 
@@ -41,6 +43,8 @@ app.post('/login', login);
 app.post('/user/image',FBAuth, uploadImage);
 app.post('/user', FBAuth, addUserDetails);
 app.get('/user', FBAuth, getUser);
+app.get('/user/:handle', getUserDetails);
+app.post('/notifications', readNotifications)
 
 exports.api = functions.region('us-east4').https.onRequest(app);
 
