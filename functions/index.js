@@ -43,3 +43,71 @@ app.post('/user', FBAuth, addUserDetails);
 app.get('/user', FBAuth, getUser);
 
 exports.api = functions.region('us-east4').https.onRequest(app);
+
+// CREATE NOTIFICATION WHEN LIKED
+exports.createNotificationOnLike = functions
+  .region('us-east4')
+  .firestore.document('likes/{id}')
+  .onCreate((snapshot) => {
+    return db
+      .doc(`/screams/${snapshot.data().screamId}`)
+      .get()
+      .then((doc) => {
+        if (
+          doc.exists &&
+          doc.data().userHandle !== snapshot.data().userHandle
+        ) {
+          return db.doc(`/notifications/${snapshot.id}`).set({
+            recipient: doc.data().userHandle,
+            sender: snapshot.data().userHandle,
+            read: false,
+            screamId: doc.id,
+            type: 'like',
+            createdAt: new Date().toISOString()
+          });
+        }
+      })
+      .catch((err) => console.error(err));
+  });
+  // CREATE NOTIFICATION WHEN UNLIKED
+exports.deleteNotificationOnUnLike = functions
+  .region('us-east4')
+  .firestore.document('likes/{id}')
+  .onDelete((snapshot) => {
+    return db
+      .doc(`/notifications/${snapshot.id}`)
+      .delete()
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });
+
+  // CREATE NOTIFICATION WHEN COMMENTED
+exports.createNotificationOnComment = functions
+  .region('us-east4')
+  .firestore.document('comments/{id}')
+  .onCreate((snapshot) => {
+    return db
+      .doc(`/screams/${snapshot.data().screamId}`)
+      .get()
+      .then((doc) => {
+        if (
+          doc.exists &&
+          doc.data().userHandle !== snapshot.data().userHandle
+        ) {
+          return db.doc(`/notifications/${snapshot.id}`).set({
+            recipient: doc.data().userHandle,
+            sender: snapshot.data().userHandle,
+            read: false,
+            screamId: doc.id,
+            type: 'comment',
+            createdAt: new Date().toISOString()
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });

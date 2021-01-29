@@ -27,7 +27,17 @@ let db = {
             body: 'People are people',
             createdAt: '2021-01-25T01:10:01.657Z'
         }
-    ]
+    ],
+    notifications: [
+        {
+          recipient: 'person',
+          sender: 'human',
+          read: 'true | false',
+          screamId: 'hhbhbhiudiuio',
+          type: 'like | comment',
+          createdAt: '2021-01-25T01:10:01.657Z'
+        }
+      ]
 };
 
 // REDUX
