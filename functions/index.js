@@ -57,6 +57,7 @@ exports.createNotificationOnLike = functions
       .doc(`/screams/${snapshot.data().screamId}`)
       .get()
       .then((doc) => {
+        // NO NOTIFICATION WHEN OWN SCREAM/COMMENT IS LIKED
         if (
           doc.exists &&
           doc.data().userHandle !== snapshot.data().userHandle
@@ -96,6 +97,7 @@ exports.createNotificationOnComment = functions
       .doc(`/screams/${snapshot.data().screamId}`)
       .get()
       .then((doc) => {
+        // NO NOTIFICATION WHEN OWN COMMENT IS LIKED
         if (
           doc.exists &&
           doc.data().userHandle !== snapshot.data().userHandle
@@ -123,6 +125,7 @@ exports.createNotificationOnComment = functions
   .onUpdate((change) => {
     console.log(change.before.data());
     console.log(change.after.data());
+    // ONLY IF IMAGE IS UPDATED
     if (change.before.data().imageUrl !== change.after.data().imageUrl) {
       console.log('Image changed!');
       const batch = db.batch();
