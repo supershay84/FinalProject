@@ -141,7 +141,7 @@ exports.createNotificationOnComment = functions
   });
 
 // DELETE ALL COMMENTS/LIKES WHEN SCREAM IS DELETED
-exports.oScreamDelete = functions
+exports.onScreamDelete = functions
   .region('us-east4')
   .firestore.document('/screams/{screamId}')
   .onDelete((snapshot, context) => {

@@ -87,7 +87,7 @@ exports.commentScream = (req, res) => {
     db.doc(`/screams/${req.params.screamId}`).get()
         .then((doc) => {
             if(!doc.exists){
-                return res.status(404).json({ error: 'Scream not heard!'});
+                return res.status(404).json({ comment: 'Scream not heard!'});
             }
             return doc.ref.update({ commentCount: doc.data().commentCount + 1 });
         })
