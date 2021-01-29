@@ -184,3 +184,27 @@ exports.unlikeScream = (req, res) => {
             res.status(500).json({ error: err.code });
         });
 };
+// DELETE A SCREAM
+exports.deleteScream = (req, res) => {
+    const document = db.doc(`/screams/${req.params.screamId}`);
+    document.get()
+        .then((doc) => {
+            // CHECK IF SCREAM EXISTS
+            if(!doc.exists){
+                return res.status(404).json({ error: 'Scream not heard!'});
+            }
+            // CHECK IF USER IS AUTHORIZED TO DELETE
+            if(doc.data().userHandle !== req.user.handle){
+                return res.status(403).json({ error: 'Not Authorized' });
+            } else {
+                return document.delete();
+            }
+        })
+        .then(() => {
+            res.json({ message: 'Scream consumed by the void' });
+        })
+        .catch((err) => {
+            console.error(err);
+            return res.status(500).json({ error: err.code });
+        });
+};
