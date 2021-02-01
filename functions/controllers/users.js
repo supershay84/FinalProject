@@ -72,7 +72,7 @@ exports.login = (req, res) => {
     })
     .catch((err) => {
         console.error(err);
-        return res.status(403).json({general: 'Wrong password. Please try again'});
+        return res.status(403).json({general: 'Wrong email and/or password. Please try again'});
     });
 };
 // ADD USER PROFILE
