@@ -32,3 +32,12 @@ https://day.js.org/docs/en/plugin/relative-time
 
 React PropTypes
 https://reactjs.org/docs/typechecking-with-proptypes.html
+
+React AuthRoutes
+https://www.pluralsight.com/guides/how-to-router-redirect-after-login
+
+Redux Documentation
+https://redux.js.org/
+
+What does Redux do? - Dave Ceddia
+https://daveceddia.com/what-does-redux-do/
